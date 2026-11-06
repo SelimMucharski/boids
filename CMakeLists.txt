@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 3.10)
+project(boids)
+
+find_package (Eigen3 REQUIRED NO_MODULE)
+
+add_library(game_engine INTERFACE)
+target_include_directories(game_engine INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+add_executable(main main.cpp)
+
+target_link_libraries(main PRIVATE game_engine Eigen3::Eigen)
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_link_libraries(main PRIVATE X11 GL pthread png asound)
+endif()
