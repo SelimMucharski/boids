@@ -11,8 +11,8 @@ using vec = Eigen::Vector2d;
 using mat = Eigen::Matrix2d;
 
 struct Frame {
-    vec origin{0.0, 0.0};   // screen position of the world origin
-    double scale = 1.0;     // screen pixels per world unit
+    vec origin{0.0, 0.0};
+    double scale = 1.0;
     mat R = (mat() << 0, -1,
                      -1,  0).finished();
 
@@ -21,9 +21,9 @@ struct Frame {
         return { int(std::lround(s.x())), int(std::lround(s.y())) };
     }
 
-    vec toWorld(const olc::vi2d& s) const {   // e.g. for the mouse
+    vec toWorld(const olc::vi2d& s) const {
         vec p{double(s.x), double(s.y)};
-        return R * ((p - origin) / scale);    // R is its own inverse
+        return R * ((p - origin) / scale);
     }
 };
 
@@ -31,12 +31,18 @@ struct Bird {
     vec pos{0.0, 0.0};
     vec heading{1.0, 0.0};
 
+	float speed = 1;
+
     inline static const std::array<vec, 3> shape{
         vec{ 2.0 / 3.0,  0.0},
         vec{-1.0 / 3.0,  1.0 / 3.0},
         vec{-1.0 / 3.0, -1.0 / 3.0}
     };
     inline static double size = 10.0;
+
+	void update(float dt){
+		pos += speed * heading * dt;
+	}
 };
 
 class Boids : public olc::PixelGameEngine
@@ -79,7 +85,7 @@ public:
         world.origin = { ScreenWidth() / 2.0, ScreenHeight() / 2.0 };
         world.scale  = 1.0;
 
-        birds.push_back({ {0.0, 0.0},   {1.0, 0.0} });
+        birds.push_back({ {0.0, 0.0},   {1.0, 0.0}, 10 });
         birds.push_back({ {30.0, 20.0}, vec{1.0, 1.0}.normalized() });
         birds.push_back({ {-40.0, -30.0}, {0.0, -1.0} });
         return true;
@@ -90,12 +96,11 @@ public:
         Clear(olc::BLACK);
         drawAxes();
 
+        for (auto& bird : birds)
+            bird.update(fElapsedTime);
+
         for (const auto& bird : birds)
             drawBird(bird);
-
-        // Example: mouse position in world coordinates
-        vec m = world.toWorld(GetMousePos());
-        FillCircleW(m, 2.0, olc::YELLOW);
 
         return true;
     }
