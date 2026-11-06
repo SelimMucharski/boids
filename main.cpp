@@ -5,7 +5,6 @@
 
 #include <vector>
 #include <array>
-#include <cmath>
 
 using vec = Eigen::Vector2d;
 using mat = Eigen::Matrix2d;
@@ -27,11 +26,13 @@ struct Frame {
     }
 };
 
-struct Bird {
+struct BirdData {
     vec pos{0.0, 0.0};
     vec heading{1.0, 0.0};
 
 	float speed = 1;
+
+	BirdData(vec p, vec h, float s) : pos(p), heading(h), speed(s) {}
 
     inline static const std::array<vec, 3> shape{
         vec{ 2.0 / 3.0,  0.0},
@@ -45,10 +46,20 @@ struct Bird {
 	}
 };
 
+using Bird = std::shared_ptr<BirdData>;
+using Birds   = std::vector<Bird>;
+
+Birds getNeighbours(){
+	
+
+	
+	return {};
+}
+
 class Boids : public olc::PixelGameEngine
 {
 private:
-    std::vector<Bird> birds;
+    Birds birds;
     Frame world;
 
     void DrawLineW(const vec& a, const vec& b, olc::Pixel c = olc::WHITE) {
@@ -68,11 +79,11 @@ private:
 
     void drawBird(const Bird& b) {
         mat rot;
-        rot << b.heading, vec{-b.heading.y(), b.heading.x()};
+        rot << b->heading, vec{-b->heading.y(), b->heading.x()};
 
         std::array<vec, 3> p;
         for (int i = 0; i < 3; ++i)
-            p[i] = b.pos + Bird::size * (rot * Bird::shape[i]);
+            p[i] = b->pos + BirdData::size * (rot * BirdData::shape[i]);
 
         FillTriangleW(p[0], p[1], p[2]);
     }
@@ -85,9 +96,12 @@ public:
         world.origin = { ScreenWidth() / 2.0, ScreenHeight() / 2.0 };
         world.scale  = 1.0;
 
-        birds.push_back({ {0.0, 0.0},   {1.0, 0.0}, 10 });
-        birds.push_back({ {30.0, 20.0}, vec{1.0, 1.0}.normalized() });
-        birds.push_back({ {-40.0, -30.0}, {0.0, -1.0} });
+		birds.push_back(std::make_shared<BirdData>( vec{0.0, 0.0}, vec{1.0, 0.0}, 10.0f ));
+		birds.push_back(std::make_shared<BirdData>( vec{30.0, 20.0}, vec{1.0, 1.0}.normalized(), 10.0f ));
+		birds.push_back(std::make_shared<BirdData>( vec{-40.0, -30.0}, vec{0.0, -1.0}, 10.0f ));
+
+        // birds.push_back({ {30.0, 20.0}, vec{1.0, 1.0}.normalized() });
+        // birds.push_back({ {-40.0, -30.0}, {0.0, -1.0} });
         return true;
     }
 
@@ -97,7 +111,7 @@ public:
         drawAxes();
 
         for (auto& bird : birds)
-            bird.update(fElapsedTime);
+            bird->update(fElapsedTime);
 
         for (const auto& bird : birds)
             drawBird(bird);
