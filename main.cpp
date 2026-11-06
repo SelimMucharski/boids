@@ -8,6 +8,8 @@
 #include <ranges>
 #include <algorithm>
 #include <numeric>
+#include <random>
+#include <cmath>
 
 using vec = Eigen::Vector2d;
 using mat = Eigen::Matrix2d;
@@ -52,17 +54,27 @@ using Birds = std::vector<Bird>;
 
 
 constexpr double CLOSE = 40.0;
-constexpr double FAR = 80.0;
+constexpr double FAR = 60.0;
 
 constexpr double AVOID_factor = 0.05;
 constexpr double MATCHING_factor = 0.005;
 constexpr double CENTERING_factor = 0.0005;
 constexpr double TURN_factor = 0.2;
 
+constexpr double MAX_SPEED = 100;
+constexpr double MIN_SPEED = 1;
+
 // constexpr double AVOID_factor = 0.0;
 // constexpr double MATCHING_factor = 0.0;
 // constexpr double CENTERING_factor = 0.000;
 // constexpr double TURN_factor = 0.0;
+
+
+std::random_device rd;
+std::mt19937 gen(rd());
+
+
+
 
 Birds findCloseNeighbours(const Bird& bird, const Birds& allBirds) {
     auto filtered = allBirds | std::views::filter([&](const auto& other) {
@@ -131,26 +143,27 @@ public:
         world.origin = { ScreenWidth() / 2.0, ScreenHeight() / 2.0 };
         world.scale  = 1.0;
 
-		birds.push_back(std::make_shared<BirdData>(vec{0.0, 0.0}, vec{1.0, 0.0}));
-		birds.push_back(std::make_shared<BirdData>(vec{30.0, 20.0}, vec{1.0, 1.0}));
-		birds.push_back(std::make_shared<BirdData>(vec{-40.0, -30.0}, vec{0.0, -1.0}));
+		std::uniform_real_distribution<double> pos_dist(-400.0, 400.0);
+		std::uniform_real_distribution<double> speed_dist(0.0, 100.0);
+		std::uniform_real_distribution<double> angle_dist(0.0, 2 * M_PI);
 
-		birds.push_back(std::make_shared<BirdData>(vec{100.0, 100.0}, vec{1.0, 1.0}));
-		birds.push_back(std::make_shared<BirdData>(vec{105.0, 95.0},  vec{1.0, 1.0}));
-		birds.push_back(std::make_shared<BirdData>(vec{95.0, 105.0},  vec{1.0, 1.0}));
-		birds.push_back(std::make_shared<BirdData>(vec{110.0, 110.0}, vec{1.0, 1.0}));
 
-		birds.push_back(std::make_shared<BirdData>(vec{-200.0, 0.0}, vec{1.0, 0.0}));
-		birds.push_back(std::make_shared<BirdData>(vec{200.0, 0.0}, vec{-1.0, 0.0}));
 
-		birds.push_back(std::make_shared<BirdData>(vec{300.0, -200.0}, vec{0.0, 1.0}));
-		birds.push_back(std::make_shared<BirdData>(vec{-300.0, 200.0}, vec{-1.0, -1.0}));
-		birds.push_back(std::make_shared<BirdData>(vec{400.0, 400.0},  vec{-1.0, 0.0}));
+		const int NUM_BIRDS = 50;
 
-		birds.push_back(std::make_shared<BirdData>(vec{0.0, 35.0},   vec{-1.0, 0.0}));
-		birds.push_back(std::make_shared<BirdData>(vec{0.0, -35.0},  vec{1.0, 0.0}));
-		birds.push_back(std::make_shared<BirdData>(vec{35.0, 0.0},   vec{0.0, 1.0}));
-		birds.push_back(std::make_shared<BirdData>(vec{-35.0, 0.0},  vec{0.0, -1.0}));
+		for (int i = 0; i < NUM_BIRDS; ++i) {
+			vec random_pos{pos_dist(gen), pos_dist(gen)};
+
+			double angle = angle_dist(gen);
+			double speed = speed_dist(gen);
+
+			vec random_vel{
+				speed * std::cos(angle),
+				speed * std::sin(angle)
+			};
+
+			birds.push_back(std::make_shared<BirdData>(random_pos, random_vel));
+		}
 
 
         return true;
@@ -197,6 +210,12 @@ public:
 			if(bird->pos.y() > 500) bird->velocity += vec{0.0, -1.0} * TURN_factor;
 			if(bird->pos.y() < -500) bird->velocity += vec{0.0, 1.0} * TURN_factor;
 			
+			if(bird->velocity.norm() < MIN_SPEED)
+				bird->velocity = bird->velocity.normalized()*MIN_SPEED;
+
+			if(bird->velocity.norm() > MAX_SPEED)
+				bird->velocity = bird->velocity.normalized()*MAX_SPEED;
+
 		}
 
         for (auto& bird : birds)
