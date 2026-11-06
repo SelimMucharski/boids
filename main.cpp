@@ -6,6 +6,8 @@
 #include <vector>
 #include <array>
 #include <algorithm>
+#include <random>
+#include <cmath>
 #include <numbers>
 #include <string>
 
@@ -31,11 +33,21 @@ namespace cfg {
     constexpr double BOUND_X = 450.0;
     constexpr double BOUND_Y = 500.0;
 
-    constexpr double DT = 1.0 / 60.0;
-    constexpr int MAX_STEPS_PER_FRAME = 5;
+    constexpr double DT = 1.0 / 60.0;          // stały krok symulacji
+    constexpr int MAX_STEPS_PER_FRAME = 5;     // ochrona przed "spiralą śmierci"
 
     constexpr int NUM_BIRDS = 500;
+
+    constexpr double MOUSE_RADIUS   = 150.0;          // zasięg wpływu kursora
+    constexpr double MOUSE_RADIUS2  = MOUSE_RADIUS * MOUSE_RADIUS;
+    constexpr double ATTRACT_factor = 2.0;            // LPM – przyciąganie
+    constexpr double REPEL_factor   = 4.0;            // PPM – odpychanie
+    constexpr int    SPAWN_COUNT    = 20;             // ŚPM – ile ptaków dodać
+    constexpr double ZOOM_STEP      = 1.1;
+    constexpr double MIN_ZOOM = 0.2, MAX_ZOOM = 5.0;
 }
+
+enum class MouseMode { Idle, Attract, Repel };
 
 struct Frame {
     vec origin{0.0, 0.0};
@@ -129,15 +141,19 @@ private:
     int cellIndex(int x, int y) const { return y * cols + x; }
 };
 
+
 class Boids : public olc::PixelGameEngine
 {
 private:
     std::vector<BirdData> birds;
-    std::vector<vec> newVel;          // podwójny bufor prędkości
+    std::vector<vec> newVel; 
     SpatialGrid grid{cfg::FAR};
     Frame world;
 
     double accumulator = 0.0;
+
+    vec mouseWorld{0.0, 0.0};
+    MouseMode mouseMode = MouseMode::Idle;
     bool debugRadii = false;
     bool paused = false;
 
@@ -181,7 +197,7 @@ private:
         int nClose = 0, nFar = 0;
 
         grid.forEachCandidate(b.pos, [&](int j) {
-            if (j == i) return;                       // ptak nie jest swoim sąsiadem
+            if (j == i) return;                       
             const BirdData& o = birds[j];
             const double d2 = (o.pos - b.pos).squaredNorm();
             if (d2 < cfg::CLOSE2) {
@@ -203,6 +219,20 @@ private:
         }
         if (nClose > 0) {
             v += (b.pos - closePos / nClose) * cfg::AVOID_factor;
+        }
+
+        if (mouseMode != MouseMode::Idle) {
+            const vec toMouse = mouseWorld - b.pos;
+            const double d2 = toMouse.squaredNorm();
+            if (d2 < cfg::MOUSE_RADIUS2 && d2 > 1e-12) {
+                const double d = std::sqrt(d2);
+                const double falloff = 1.0 - d / cfg::MOUSE_RADIUS;
+                const vec dir = toMouse / d;
+                if (mouseMode == MouseMode::Attract)
+                    v += dir * (cfg::ATTRACT_factor * falloff);
+                else
+                    v -= dir * (cfg::REPEL_factor * falloff);
+            }
         }
 
         if (b.pos.x() >  cfg::BOUND_X) v.x() -= cfg::TURN_factor;
@@ -239,6 +269,43 @@ private:
         }
     }
 
+    void spawnBirdsAt(const vec& center, int count, double spread = 15.0) {
+        std::normal_distribution<double> offset(0.0, spread);
+        std::uniform_real_distribution<double> angle_dist(0.0, 2.0 * std::numbers::pi);
+        birds.reserve(birds.size() + count);
+        for (int i = 0; i < count; ++i) {
+            const double angle = angle_dist(gen);
+            birds.push_back({
+                center + vec{offset(gen), offset(gen)},
+                vec{std::cos(angle), std::sin(angle)} * (cfg::MAX_SPEED * 0.5)
+            });
+        }
+    }
+
+    void zoomAt(const olc::vi2d& screenPos, double factor) {
+        const double newScale = std::clamp(world.scale * factor, cfg::MIN_ZOOM, cfg::MAX_ZOOM);
+        const vec anchor = world.toWorld(screenPos);
+        world.scale = newScale;
+        const vec sp{double(screenPos.x), double(screenPos.y)};
+        world.origin = sp - world.scale * (world.R * anchor);
+    }
+
+    void handleMouse() {
+        const olc::vi2d m = GetMousePos();
+        mouseWorld = world.toWorld(m);
+
+        if (GetMouse(0).bHeld)      mouseMode = MouseMode::Attract;
+        else if (GetMouse(1).bHeld) mouseMode = MouseMode::Repel;
+        else                        mouseMode = MouseMode::Idle;
+
+        if (GetMouse(2).bPressed)
+            spawnBirdsAt(mouseWorld, cfg::SPAWN_COUNT);
+
+        const int wheel = GetMouseWheel();
+        if (wheel > 0) zoomAt(m, cfg::ZOOM_STEP);
+        if (wheel < 0) zoomAt(m, 1.0 / cfg::ZOOM_STEP);
+    }
+
     void spawnBirds(int count) {
         std::uniform_real_distribution<double> pos_dist(-400.0, 400.0);
         std::uniform_real_distribution<double> speed_dist(20.0, cfg::MAX_SPEED);
@@ -272,6 +339,11 @@ public:
         if (GetKey(olc::Key::SPACE).bPressed) paused = !paused;
         if (GetKey(olc::Key::A).bPressed)     spawnBirds(100);
         if (GetKey(olc::Key::R).bPressed)     { birds.clear(); spawnBirds(cfg::NUM_BIRDS); }
+        if (GetKey(olc::Key::Z).bPressed) {   // reset widoku
+            world.scale  = 1.0;
+            world.origin = { ScreenWidth() / 2.0, ScreenHeight() / 2.0 };
+        }
+        handleMouse();
 
         if (!paused) {
             accumulator += fElapsedTime;
@@ -298,8 +370,17 @@ public:
         for (const auto& b : birds)
             drawBird(b);
 
+        if (mouseMode == MouseMode::Attract)
+            DrawCircleW(mouseWorld, cfg::MOUSE_RADIUS, olc::Pixel(80, 220, 80));
+        else if (mouseMode == MouseMode::Repel)
+            DrawCircleW(mouseWorld, cfg::MOUSE_RADIUS, olc::Pixel(240, 80, 80));
+        else
+            DrawCircleW(mouseWorld, cfg::MOUSE_RADIUS, olc::Pixel(60, 60, 60));
+
         DrawString(4, 4, "Ptaki: " + std::to_string(birds.size()) +
-                         "   [D] promienie  [A] +100  [R] reset  [Spacja] pauza",
+                         "   [D] promienie  [A] +100  [R] reset  [Z] widok  [Spacja] pauza",
+                   olc::GREY);
+        DrawString(4, 16, "LPM przyciaga  PPM odpycha  SPM dodaje ptaki  kolko zoom",
                    olc::GREY);
         return true;
     }
