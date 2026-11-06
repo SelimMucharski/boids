@@ -7,6 +7,7 @@
 #include <array>
 #include <ranges>
 #include <algorithm>
+#include <numeric>
 
 using vec = Eigen::Vector2d;
 using mat = Eigen::Matrix2d;
@@ -30,11 +31,9 @@ struct Frame {
 
 struct BirdData {
     vec pos{0.0, 0.0};
-    vec heading{1.0, 0.0};
+    vec velocity{1.0, 0.0};
 
-	float speed = 1;
-
-	BirdData(vec p, vec h, float s) : pos(p), heading(h), speed(s) {}
+	BirdData(vec p, vec s) : pos(p), velocity(s){}
 
     inline static const std::array<vec, 3> shape{
         vec{ 2.0 / 3.0,  0.0},
@@ -44,19 +43,28 @@ struct BirdData {
     inline static double size = 10.0;
 
 	void update(float dt){
-		pos += speed * heading * dt;
+		pos += velocity * dt;
 	}
 };
 
 using Bird = std::shared_ptr<BirdData>;
-using Birds   = std::vector<Bird>;
+using Birds = std::vector<Bird>;
 
 
-constexpr double CLOSE = 10.0;
-constexpr double FAR = 20.0;
+constexpr double CLOSE = 40.0;
+constexpr double FAR = 80.0;
 
+constexpr double AVOID_factor = 0.05;
+constexpr double MATCHING_factor = 0.005;
+constexpr double CENTERING_factor = 0.0005;
+constexpr double TURN_factor = 0.2;
 
-Birds getCloseNeighbours(const Bird& bird, const Birds& allBirds) {
+// constexpr double AVOID_factor = 0.0;
+// constexpr double MATCHING_factor = 0.0;
+// constexpr double CENTERING_factor = 0.000;
+// constexpr double TURN_factor = 0.0;
+
+Birds findCloseNeighbours(const Bird& bird, const Birds& allBirds) {
     auto filtered = allBirds | std::views::filter([&](const auto& other) {
         return (bird->pos - other->pos).norm() < CLOSE;
     });
@@ -66,7 +74,7 @@ Birds getCloseNeighbours(const Bird& bird, const Birds& allBirds) {
     return out;
 }
 
-Birds getFarNeighbours(const Bird& bird, const Birds& allBirds) {
+Birds findFarNeighbours(const Bird& bird, const Birds& allBirds) {
     auto filtered = allBirds | std::views::filter([&](const auto& other) {
         double dist = (bird->pos - other->pos).norm();
         return dist >= CLOSE && dist < FAR;
@@ -100,11 +108,17 @@ private:
 
     void drawBird(const Bird& b) {
         mat rot;
-        rot << b->heading, vec{-b->heading.y(), b->heading.x()};
+
+		auto heading = b->velocity.normalized();
+
+        rot << heading, vec{-heading.y(), heading.x()};
 
         std::array<vec, 3> p;
         for (int i = 0; i < 3; ++i)
             p[i] = b->pos + BirdData::size * (rot * BirdData::shape[i]);
+
+		// FillCircleW(b->pos, FAR, olc::CYAN);
+		// FillCircleW(b->pos, CLOSE, olc::RED);
 
         FillTriangleW(p[0], p[1], p[2]);
     }
@@ -117,9 +131,27 @@ public:
         world.origin = { ScreenWidth() / 2.0, ScreenHeight() / 2.0 };
         world.scale  = 1.0;
 
-		birds.push_back(std::make_shared<BirdData>( vec{0.0, 0.0}, vec{1.0, 0.0}, 10.0f ));
-		birds.push_back(std::make_shared<BirdData>( vec{30.0, 20.0}, vec{1.0, 1.0}.normalized(), 10.0f ));
-		birds.push_back(std::make_shared<BirdData>( vec{-40.0, -30.0}, vec{0.0, -1.0}, 10.0f ));
+		birds.push_back(std::make_shared<BirdData>(vec{0.0, 0.0}, vec{1.0, 0.0}));
+		birds.push_back(std::make_shared<BirdData>(vec{30.0, 20.0}, vec{1.0, 1.0}));
+		birds.push_back(std::make_shared<BirdData>(vec{-40.0, -30.0}, vec{0.0, -1.0}));
+
+		birds.push_back(std::make_shared<BirdData>(vec{100.0, 100.0}, vec{1.0, 1.0}));
+		birds.push_back(std::make_shared<BirdData>(vec{105.0, 95.0},  vec{1.0, 1.0}));
+		birds.push_back(std::make_shared<BirdData>(vec{95.0, 105.0},  vec{1.0, 1.0}));
+		birds.push_back(std::make_shared<BirdData>(vec{110.0, 110.0}, vec{1.0, 1.0}));
+
+		birds.push_back(std::make_shared<BirdData>(vec{-200.0, 0.0}, vec{1.0, 0.0}));
+		birds.push_back(std::make_shared<BirdData>(vec{200.0, 0.0}, vec{-1.0, 0.0}));
+
+		birds.push_back(std::make_shared<BirdData>(vec{300.0, -200.0}, vec{0.0, 1.0}));
+		birds.push_back(std::make_shared<BirdData>(vec{-300.0, 200.0}, vec{-1.0, -1.0}));
+		birds.push_back(std::make_shared<BirdData>(vec{400.0, 400.0},  vec{-1.0, 0.0}));
+
+		birds.push_back(std::make_shared<BirdData>(vec{0.0, 35.0},   vec{-1.0, 0.0}));
+		birds.push_back(std::make_shared<BirdData>(vec{0.0, -35.0},  vec{1.0, 0.0}));
+		birds.push_back(std::make_shared<BirdData>(vec{35.0, 0.0},   vec{0.0, 1.0}));
+		birds.push_back(std::make_shared<BirdData>(vec{-35.0, 0.0},  vec{0.0, -1.0}));
+
 
         return true;
     }
@@ -128,6 +160,44 @@ public:
     {
         Clear(olc::BLACK);
         drawAxes();
+
+		for (auto& bird : birds){
+			auto cls = findCloseNeighbours(bird, birds);
+			auto far = findFarNeighbours(bird, birds);
+
+			auto pos_accumulate = [](vec a, Bird b)
+			{
+				return std::move(a) + b->pos;
+			};
+
+			auto vel_accumulate = [](vec a, Bird b)
+			{
+				return std::move(a) + b->velocity;
+			};
+
+			if(!far.empty()){
+				vec far_avg_pos = std::accumulate(far.begin(), far.end(), vec{0.0,0.0}, pos_accumulate) / far.size();
+	
+				bird->velocity += (far_avg_pos - bird->pos)*CENTERING_factor;
+	
+				vec far_avg_vel = std::accumulate(far.begin(), far.end(), vec{0.0,0.0}, vel_accumulate) / far.size();
+	
+				bird->velocity += (far_avg_vel - bird->velocity)*MATCHING_factor;
+			}
+
+			if(!cls.empty()){
+				vec cls_avg_pos = std::accumulate(cls.begin(), cls.end(), vec{0.0,0.0}, pos_accumulate) / cls.size();
+				
+				bird->velocity += (bird->pos - cls_avg_pos)*AVOID_factor;
+			}
+
+
+			if(bird->pos.x() > 450) bird->velocity += vec{-1.0, 0.0} * TURN_factor;
+			if(bird->pos.x() < -450) bird->velocity += vec{1.0, 0.0} * TURN_factor;
+			if(bird->pos.y() > 500) bird->velocity += vec{0.0, -1.0} * TURN_factor;
+			if(bird->pos.y() < -500) bird->velocity += vec{0.0, 1.0} * TURN_factor;
+			
+		}
 
         for (auto& bird : birds)
             bird->update(fElapsedTime);
