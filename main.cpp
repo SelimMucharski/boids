@@ -33,16 +33,16 @@ namespace cfg {
     constexpr double BOUND_X = 450.0;
     constexpr double BOUND_Y = 500.0;
 
-    constexpr double DT = 1.0 / 60.0;          // stały krok symulacji
-    constexpr int MAX_STEPS_PER_FRAME = 5;     // ochrona przed "spiralą śmierci"
+    constexpr double DT = 1.0 / 60.0;
+    constexpr int MAX_STEPS_PER_FRAME = 5;
 
-    constexpr int NUM_BIRDS = 500;
+    constexpr int NUM_BIRDS = 0;
 
-    constexpr double MOUSE_RADIUS   = 150.0;          // zasięg wpływu kursora
+    constexpr double MOUSE_RADIUS   = 150.0;
     constexpr double MOUSE_RADIUS2  = MOUSE_RADIUS * MOUSE_RADIUS;
-    constexpr double ATTRACT_factor = 2.0;            // LPM – przyciąganie
-    constexpr double REPEL_factor   = 4.0;            // PPM – odpychanie
-    constexpr int    SPAWN_COUNT    = 20;             // ŚPM – ile ptaków dodać
+    constexpr double ATTRACT_factor = 2.0;
+    constexpr double REPEL_factor   = 4.0;
+    constexpr int    SPAWN_COUNT    = 20;
     constexpr double ZOOM_STEP      = 1.1;
     constexpr double MIN_ZOOM = 0.2, MAX_ZOOM = 5.0;
 }
