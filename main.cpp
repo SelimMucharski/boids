@@ -53,11 +53,11 @@ using Bird = std::shared_ptr<BirdData>;
 using Birds = std::vector<Bird>;
 
 
-constexpr double CLOSE = 40.0;
+constexpr double CLOSE = 20.0;
 constexpr double FAR = 60.0;
 
 constexpr double AVOID_factor = 0.05;
-constexpr double MATCHING_factor = 0.005;
+constexpr double MATCHING_factor = 0.05;
 constexpr double CENTERING_factor = 0.0005;
 constexpr double TURN_factor = 0.2;
 
@@ -129,8 +129,12 @@ private:
         for (int i = 0; i < 3; ++i)
             p[i] = b->pos + BirdData::size * (rot * BirdData::shape[i]);
 
-		// FillCircleW(b->pos, FAR, olc::CYAN);
-		// FillCircleW(b->pos, CLOSE, olc::RED);
+		SetPixelMode(olc::Pixel::ALPHA);
+
+		FillCircleW(b->pos, FAR, olc::Pixel(0, 255, 255, 80));   // Cyjanowy (półprzezroczysty)
+		FillCircleW(b->pos, CLOSE, olc::Pixel(255, 0, 0, 80));  // Czerwony (półprzezroczysty)
+
+		SetPixelMode(olc::Pixel::NORMAL);
 
         FillTriangleW(p[0], p[1], p[2]);
     }
