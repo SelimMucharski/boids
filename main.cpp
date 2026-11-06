@@ -5,6 +5,8 @@
 
 #include <vector>
 #include <array>
+#include <ranges>
+#include <algorithm>
 
 using vec = Eigen::Vector2d;
 using mat = Eigen::Matrix2d;
@@ -49,11 +51,30 @@ struct BirdData {
 using Bird = std::shared_ptr<BirdData>;
 using Birds   = std::vector<Bird>;
 
-Birds getNeighbours(){
-	
 
-	
-	return {};
+constexpr double CLOSE = 10.0;
+constexpr double FAR = 20.0;
+
+
+Birds getCloseNeighbours(const Bird& bird, const Birds& allBirds) {
+    auto filtered = allBirds | std::views::filter([&](const auto& other) {
+        return (bird->pos - other->pos).norm() < CLOSE;
+    });
+
+    Birds out;
+    std::ranges::copy(filtered, std::back_inserter(out));
+    return out;
+}
+
+Birds getFarNeighbours(const Bird& bird, const Birds& allBirds) {
+    auto filtered = allBirds | std::views::filter([&](const auto& other) {
+        double dist = (bird->pos - other->pos).norm();
+        return dist >= CLOSE && dist < FAR;
+    });
+
+    Birds out;
+    std::ranges::copy(filtered, std::back_inserter(out));
+    return out;
 }
 
 class Boids : public olc::PixelGameEngine
@@ -100,8 +121,6 @@ public:
 		birds.push_back(std::make_shared<BirdData>( vec{30.0, 20.0}, vec{1.0, 1.0}.normalized(), 10.0f ));
 		birds.push_back(std::make_shared<BirdData>( vec{-40.0, -30.0}, vec{0.0, -1.0}, 10.0f ));
 
-        // birds.push_back({ {30.0, 20.0}, vec{1.0, 1.0}.normalized() });
-        // birds.push_back({ {-40.0, -30.0}, {0.0, -1.0} });
         return true;
     }
 
