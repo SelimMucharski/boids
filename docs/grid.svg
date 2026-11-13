@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" width="960" height="360" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<rect width="960" height="360" rx="14" fill="#0d1117"/>
+<defs><polygon id="b" points="7,0 -4,4 -4,-4"/></defs>
+<text x="40" y="42" fill="#e6edf3" font-size="20" font-weight="600">Uniform spatial grid</text>
+<text x="275" y="42" fill="#7d8590" font-size="13">cell size = FAR, so every neighbour lies in the 3×3 block around the boid</text>
+<rect x="40" y="70" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="98" y="70" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="156" y="70" width="58" height="58" fill="#1f6feb22" stroke="#388bfd"/>
+<rect x="214" y="70" width="58" height="58" fill="#1f6feb22" stroke="#388bfd"/>
+<rect x="272" y="70" width="58" height="58" fill="#1f6feb22" stroke="#388bfd"/>
+<rect x="330" y="70" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="388" y="70" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="446" y="70" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="40" y="128" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="98" y="128" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="156" y="128" width="58" height="58" fill="#1f6feb22" stroke="#388bfd"/>
+<rect x="214" y="128" width="58" height="58" fill="#1f6feb22" stroke="#388bfd"/>
+<rect x="272" y="128" width="58" height="58" fill="#1f6feb22" stroke="#388bfd"/>
+<rect x="330" y="128" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="388" y="128" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="446" y="128" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="40" y="186" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="98" y="186" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="156" y="186" width="58" height="58" fill="#1f6feb22" stroke="#388bfd"/>
+<rect x="214" y="186" width="58" height="58" fill="#1f6feb22" stroke="#388bfd"/>
+<rect x="272" y="186" width="58" height="58" fill="#1f6feb22" stroke="#388bfd"/>
+<rect x="330" y="186" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="388" y="186" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="446" y="186" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="40" y="244" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="98" y="244" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="156" y="244" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="214" y="244" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="272" y="244" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="330" y="244" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="388" y="244" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<rect x="446" y="244" width="58" height="58" fill="#161b22" stroke="#30363d"/>
+<circle cx="245.9" cy="154.1" r="58" fill="none" stroke="#2bb5b5" stroke-dasharray="5 4"/>
+<use href="#b" fill="#30363d" transform="translate(153.6,195.7) rotate(133)"/>
+<use href="#b" fill="#7d8590" transform="translate(319.0,213.7) rotate(24)"/>
+<use href="#b" fill="#30363d" transform="translate(52.0,260.2) rotate(93)"/>
+<use href="#b" fill="#30363d" transform="translate(151.9,295.0) rotate(169)"/>
+<use href="#b" fill="#30363d" transform="translate(424.1,180.8) rotate(230)"/>
+<use href="#b" fill="#30363d" transform="translate(114.1,215.7) rotate(312)"/>
+<use href="#b" fill="#7d8590" transform="translate(282.5,239.1) rotate(242)"/>
+<use href="#b" fill="#30363d" transform="translate(74.9,242.8) rotate(213)"/>
+<use href="#b" fill="#7d8590" transform="translate(182.2,82.8) rotate(312)"/>
+<use href="#b" fill="#7d8590" transform="translate(259.7,234.1) rotate(316)"/>
+<use href="#b" fill="#30363d" transform="translate(368.8,278.6) rotate(142)"/>
+<use href="#b" fill="#30363d" transform="translate(408.0,173.8) rotate(337)"/>
+<use href="#b" fill="#30363d" transform="translate(443.2,97.4) rotate(49)"/>
+<use href="#b" fill="#30363d" transform="translate(144.1,288.4) rotate(157)"/>
+<use href="#b" fill="#7d8590" transform="translate(329.2,142.2) rotate(183)"/>
+<use href="#b" fill="#e6edf3" transform="translate(220.4,153.2) rotate(211)"/>
+<use href="#b" fill="#30363d" transform="translate(310.1,274.9) rotate(246)"/>
+<use href="#b" fill="#30363d" transform="translate(465.9,264.4) rotate(357)"/>
+<use href="#b" fill="#30363d" transform="translate(349.4,111.9) rotate(310)"/>
+<use href="#b" fill="#30363d" transform="translate(482.0,275.0) rotate(205)"/>
+<use href="#b" fill="#30363d" transform="translate(368.6,122.4) rotate(299)"/>
+<use href="#b" fill="#7d8590" transform="translate(305.2,138.7) rotate(23)"/>
+<use href="#b" fill="#30363d" transform="translate(432.0,293.8) rotate(32)"/>
+<use href="#b" fill="#30363d" transform="translate(407.9,166.3) rotate(54)"/>
+<use href="#b" fill="#30363d" transform="translate(178.8,245.1) rotate(314)"/>
+<use href="#b" fill="#30363d" transform="translate(66.0,211.2) rotate(16)"/>
+<use href="#b" fill="#30363d" transform="translate(370.7,148.8) rotate(317)"/>
+<use href="#b" fill="#30363d" transform="translate(489.2,187.2) rotate(359)"/>
+<use href="#b" fill="#7d8590" transform="translate(186.0,92.9) rotate(216)"/>
+<use href="#b" fill="#30363d" transform="translate(60.2,119.4) rotate(147)"/>
+<use href="#b" fill="#7d8590" transform="translate(321.9,110.4) rotate(15)"/>
+<use href="#b" fill="#30363d" transform="translate(438.2,145.0) rotate(345)"/>
+<use href="#b" fill="#30363d" transform="translate(451.3,159.1) rotate(166)"/>
+<use href="#b" fill="#7d8590" transform="translate(281.1,217.7) rotate(214)"/>
+<use href="#b" fill="#7d8590" transform="translate(298.8,212.4) rotate(339)"/>
+<use href="#b" fill="#e6edf3" transform="translate(275.2,170.9) rotate(259)"/>
+<use href="#b" fill="#30363d" transform="translate(153.4,142.2) rotate(352)"/>
+<use href="#b" fill="#e6edf3" transform="translate(281.5,196.7) rotate(4)"/>
+<use href="#b" fill="#e6edf3" transform="translate(233.7,203.6) rotate(7)"/>
+<use href="#b" fill="#7d8590" transform="translate(324.3,215.1) rotate(22)"/>
+<use href="#b" fill="#7d8590" transform="translate(329.6,178.6) rotate(245)"/>
+<use href="#b" fill="#7d8590" transform="translate(205.4,231.5) rotate(266)"/>
+<use href="#b" fill="#30363d" transform="translate(56.0,89.3) rotate(243)"/>
+<use href="#b" fill="#30363d" transform="translate(481.4,131.2) rotate(164)"/>
+<use href="#b" fill="#7d8590" transform="translate(313.9,146.4) rotate(131)"/>
+<use href="#b" fill="#7d8590" transform="translate(187.3,157.2) rotate(214)"/>
+<use href="#b" fill="#7d8590" transform="translate(181.8,159.0) rotate(278)"/>
+<use href="#b" fill="#30363d" transform="translate(58.2,201.2) rotate(265)"/>
+<use href="#b" fill="#7d8590" transform="translate(186.1,125.0) rotate(289)"/>
+<use href="#b" fill="#30363d" transform="translate(153.9,117.2) rotate(157)"/>
+<use href="#b" fill="#30363d" transform="translate(361.5,98.4) rotate(116)"/>
+<use href="#b" fill="#30363d" transform="translate(196.9,259.4) rotate(158)"/>
+<use href="#b" fill="#30363d" transform="translate(432.7,113.2) rotate(121)"/>
+<use href="#b" fill="#30363d" transform="translate(339.9,270.7) rotate(162)"/>
+<use href="#b" fill="#30363d" transform="translate(147.7,102.6) rotate(191)"/>
+<use href="#b" fill="#30363d" transform="translate(132.2,253.5) rotate(302)"/>
+<use href="#b" fill="#30363d" transform="translate(129.0,137.3) rotate(291)"/>
+<use href="#b" fill="#30363d" transform="translate(336.2,253.4) rotate(124)"/>
+<use href="#b" fill="#30363d" transform="translate(104.6,140.2) rotate(286)"/>
+<use href="#b" fill="#7d8590" transform="translate(168.6,152.2) rotate(150)"/>
+<use href="#b" fill="#e6edf3" transform="translate(235.7,166.1) rotate(331)"/>
+<use href="#b" fill="#30363d" transform="translate(116.5,77.0) rotate(340)"/>
+<use href="#b" fill="#30363d" transform="translate(443.8,293.1) rotate(156)"/>
+<use href="#b" fill="#30363d" transform="translate(475.5,280.0) rotate(80)"/>
+<use href="#b" fill="#30363d" transform="translate(383.0,260.1) rotate(239)"/>
+<use href="#b" fill="#e6edf3" transform="translate(280.6,139.6) rotate(123)"/>
+<use href="#b" fill="#30363d" transform="translate(148.8,91.0) rotate(212)"/>
+<use href="#b" fill="#30363d" transform="translate(175.7,254.2) rotate(16)"/>
+<use href="#b" fill="#30363d" transform="translate(454.4,228.6) rotate(333)"/>
+<use href="#b" fill="#30363d" transform="translate(451.2,273.9) rotate(208)"/>
+<polygon points="10,0 -6,6 -6,-6" fill="#f78166" transform="translate(245.9,154.1) rotate(-20)"/>
+<text x="544" y="88" fill="#e6edf3" font-size="15" font-family="ui-monospace, monospace">build()  — O(n), every step</text>
+<text x="544" y="114" fill="#7d8590" font-size="13" font-family="ui-monospace, monospace">1. bounding box of all boids → grid size</text>
+<text x="544" y="140" fill="#7d8590" font-size="13" font-family="ui-monospace, monospace">2. count boids per cell</text>
+<text x="544" y="166" fill="#7d8590" font-size="13" font-family="ui-monospace, monospace">3. prefix sum → cellStart[]</text>
+<text x="544" y="192" fill="#7d8590" font-size="13" font-family="ui-monospace, monospace">4. scatter indices → sorted[]</text>
+<text x="544" y="244" fill="#e6edf3" font-size="15" font-family="ui-monospace, monospace">forEachCandidate(p)</text>
+<text x="544" y="270" fill="#7d8590" font-size="13" font-family="ui-monospace, monospace">scan 9 contiguous ranges of sorted[]</text>
+<text x="544" y="296" fill="#7d8590" font-size="13" font-family="ui-monospace, monospace">no allocations, cache-friendly</text>
+<use href="#b" fill="#f78166" transform="translate(46,336) scale(1.3)"/><text x="60" y="340" fill="#7d8590" font-size="13">current boid</text>
+<use href="#b" fill="#e6edf3" transform="translate(206,336) scale(1.3)"/><text x="220" y="340" fill="#7d8590" font-size="13">neighbour (d &lt; FAR)</text>
+<use href="#b" fill="#7d8590" transform="translate(406,336) scale(1.3)"/><text x="420" y="340" fill="#7d8590" font-size="13">candidate, rejected by distance</text>
+<use href="#b" fill="#30363d" transform="translate(676,336) scale(1.3)"/><text x="690" y="340" fill="#7d8590" font-size="13">never visited</text>
+</svg>

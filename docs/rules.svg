@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 330" width="960" height="330" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <polygon id="boid" points="12,0 -6,6 -6,-6" fill="#e6edf3"/>
+    <polygon id="me" points="16,0 -8,8 -8,-8" fill="#f78166" stroke="#0d1117" stroke-width="2"/>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3fb950"/>
+    </marker>
+    <marker id="arrg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#7d8590"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="330" rx="14" fill="#0d1117"/>
+
+  <!-- Panel 1: Separation -->
+  <g transform="translate(20,20)">
+    <rect width="290" height="290" rx="10" fill="#161b22" stroke="#30363d"/>
+    <text x="145" y="32" text-anchor="middle" fill="#e6edf3" font-size="20" font-weight="600">Separation</text>
+    <text x="145" y="54" text-anchor="middle" fill="#7d8590" font-size="13">steer away from boids that are too close</text>
+    <circle cx="145" cy="170" r="55" fill="#8c000022" stroke="#d1242f" stroke-dasharray="5 4"/>
+    <text x="145" y="246" text-anchor="middle" fill="#d1242f" font-size="12">CLOSE = 20</text>
+    <use href="#boid" transform="translate(185,145) rotate(200)"/>
+    <use href="#boid" transform="translate(178,200) rotate(160)"/>
+    <use href="#boid" transform="translate(120,128) rotate(-60)"/>
+    <line x1="145" y1="170" x2="90" y2="200" stroke="#3fb950" stroke-width="3" marker-end="url(#arr)"/>
+    <use href="#me" transform="translate(145,170) rotate(-10)"/>
+    <text x="145" y="275" text-anchor="middle" fill="#7d8590" font-size="12" font-family="ui-monospace, monospace">v += (p − p̄_close) · 0.05</text>
+  </g>
+
+  <!-- Panel 2: Alignment -->
+  <g transform="translate(335,20)">
+    <rect width="290" height="290" rx="10" fill="#161b22" stroke="#30363d"/>
+    <text x="145" y="32" text-anchor="middle" fill="#e6edf3" font-size="20" font-weight="600">Alignment</text>
+    <text x="145" y="54" text-anchor="middle" fill="#7d8590" font-size="13">match the average heading of neighbours</text>
+    <circle cx="145" cy="165" r="85" fill="#00787814" stroke="#2bb5b5" stroke-dasharray="5 4"/>
+    <text x="145" y="266" text-anchor="middle" fill="#2bb5b5" font-size="12">FAR = 60</text>
+    <use href="#boid" transform="translate(90,120) rotate(-35)"/>
+    <use href="#boid" transform="translate(195,110) rotate(-45)"/>
+    <use href="#boid" transform="translate(205,200) rotate(-30)"/>
+    <use href="#boid" transform="translate(95,205) rotate(-50)"/>
+    <line x1="145" y1="165" x2="195" y2="183" stroke="#7d8590" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#arrg)"/>
+    <line x1="145" y1="165" x2="190" y2="125" stroke="#3fb950" stroke-width="3" marker-end="url(#arr)"/>
+    <use href="#me" transform="translate(145,165) rotate(20)"/>
+    <text x="145" y="285" text-anchor="middle" fill="#7d8590" font-size="12" font-family="ui-monospace, monospace">v += (v̄_far − v) · 0.05</text>
+  </g>
+
+  <!-- Panel 3: Cohesion -->
+  <g transform="translate(650,20)">
+    <rect width="290" height="290" rx="10" fill="#161b22" stroke="#30363d"/>
+    <text x="145" y="32" text-anchor="middle" fill="#e6edf3" font-size="20" font-weight="600">Cohesion</text>
+    <text x="145" y="54" text-anchor="middle" fill="#7d8590" font-size="13">drift towards the local centre of mass</text>
+    <circle cx="145" cy="165" r="85" fill="#00787814" stroke="#2bb5b5" stroke-dasharray="5 4"/>
+    <text x="145" y="266" text-anchor="middle" fill="#2bb5b5" font-size="12">FAR = 60</text>
+    <use href="#boid" transform="translate(195,105) rotate(100)"/>
+    <use href="#boid" transform="translate(215,160) rotate(80)"/>
+    <use href="#boid" transform="translate(175,205) rotate(140)"/>
+    <use href="#boid" transform="translate(205,215) rotate(60)"/>
+    <g stroke="#d29922" stroke-width="2.5">
+      <line x1="190" y1="166" x2="202" y2="178"/><line x1="202" y1="166" x2="190" y2="178"/>
+    </g>
+    <line x1="110" y1="160" x2="178" y2="170" stroke="#3fb950" stroke-width="3" marker-end="url(#arr)"/>
+    <use href="#me" transform="translate(110,160) rotate(-90)"/>
+    <text x="145" y="285" text-anchor="middle" fill="#7d8590" font-size="12" font-family="ui-monospace, monospace">v += (p̄_far − p) · 0.0005</text>
+  </g>
+</svg>
