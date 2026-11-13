@@ -148,7 +148,7 @@ cmake --build build
 
 ## ⚙️ Tuning
 
-All parameters live in the `cfg` namespace at the top of [`main.cpp`](main.cpp) as `constexpr` values:
+All parameters are read at runtime from [`config.conf`](config.conf) (`key = value`, `#` comments). **No rebuild needed:** the file is checked twice a second while the program runs, and edits apply immediately. If a value is invalid, the previous settings are kept and the error is printed to the terminal. Missing keys fall back to the defaults in [`include/config.hpp`](include/config.hpp). To use a different file, pass its path: `./build/main my.conf`.
 
 | Parameter | Default | Meaning |
 |-----------|---------|---------|
@@ -168,8 +168,12 @@ All parameters live in the `cfg` namespace at the top of [`main.cpp`](main.cpp) 
 
 ```
 boids/
-├── main.cpp                    # simulation, spatial grid, rendering, input
+├── config.conf                 # runtime parameters (hot-reloaded)
+├── src/
+│   ├── main.cpp                # simulation, spatial grid, rendering, input
+│   └── config.cpp              # config file loader
 ├── include/
+│   ├── config.hpp              # Config struct and defaults
 │   └── olcPixelGameEngine.h    # single-header 2D engine (window, input, drawing)
 ├── docs/                       # README media
 └── CMakeLists.txt
